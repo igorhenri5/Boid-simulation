@@ -30,7 +30,6 @@ class Simulation{
 
         float aspectRatio;
         int cameraOffset;
-        // const float DELTA_ANGLE = Util::PI / 36;
 
     //Chão
         glm::vec4 floorColor;

@@ -72,7 +72,6 @@ void Simulation::draw(){
 
     //Torre
     glBegin(GL_TRIANGLE_FAN);
-        // glColor4f(0.7, 0.7, 0.7, 1.0);
         glColor4f(.2f, .1f, 1.0f, 1.0f);
         glNormal3f(0, 1, 0);
         glVertex3f(0, towerHeight, 0);
