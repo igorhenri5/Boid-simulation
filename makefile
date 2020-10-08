@@ -1,6 +1,5 @@
-# all: build_util build_entities build_breakout build_main link
-all: build_entities build_simulation build_main link run
-linux: build_util build_entities build_breakout build_main link_alt
+all:  build_util build_entities build_simulation build_main link run
+linux: build_util build_entities build_simulation build_main link_alt
 
 .PHONY: all
 
@@ -25,7 +24,7 @@ build_entities:
 	g++ -c entities/*.cpp -I"freeglut\include" -I"glm"
 
 build_util:
-	g++ -c util/*.cpp -I"freeglut\include" 
+	g++ -c util/*.cpp -I"freeglut\include" -I"glm"
 
 # clean:
 # 	rm -f *.o *.exe

@@ -7,7 +7,6 @@ Simulation::Simulation(int width, int height){
 }
 
 void Simulation::init(){
-
     towerHeight = 50;
     cameraPreset = TOP_VIEW;
     cameraOffset = 0;
@@ -20,8 +19,12 @@ void Simulation::init(){
                                     10.0, 0.0, 10.0, 1.0
                                  );
 
+    guide = new Boid(glm::vec3(5,10,5));
 }
+
 void Simulation::update(){
+
+    guide->update();
 
     if(cameraPreset == ABOVE_TOWER){
         eye = glm::vec3(0, towerHeight + cameraOffset, 0);
@@ -69,6 +72,12 @@ void Simulation::draw(){
     // gluPerspective(60.0, this->aspectRatio, 1.6, 100);
     gluPerspective(60.0, this->aspectRatio, 1.6, 500);
     glMatrixMode(GL_MODELVIEW);
+
+    //Pombo guia
+    guide->draw();
+
+    //Pombaiada
+    //boids->draw();
 
     //Torre
     glBegin(GL_TRIANGLE_FAN);

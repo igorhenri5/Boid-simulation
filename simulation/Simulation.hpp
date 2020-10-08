@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 #include <vector>
 
-#include "../entities/Boid.hpp"
+#include "../entities/BoidGroup.hpp"
 #include "../util/Util.hpp"
 
 #define FRAMETIME 1000/60
@@ -40,8 +40,8 @@ class Simulation{
 
     //Boids
         int numBoids;
-        std::vector<Boid*> boids;
-        Boid* leader;
+        BoidGroup* boids;
+        Boid* guide;
 
     //Status
         bool isPaused = false;
