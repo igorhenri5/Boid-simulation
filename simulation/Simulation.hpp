@@ -9,6 +9,7 @@
 #include "../util/Util.hpp"
 
 #define FRAMETIME 1000/60
+#define FAR 200
 
 class Simulation{
     public:

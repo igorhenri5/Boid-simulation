@@ -26,10 +26,32 @@ void Simulation::init(){
 }
 
 void Simulation::update(){
-    // std::cout << "GTIME :: " <<  glutGet(GLUT_ELAPSED_TIME) << std::endl;
+
+    if(cameraPreset == ABOVE_TOWER){
+        eye = glm::vec3(0, towerHeight + cameraOffset, 0);
+        up = glm::vec3(0,1,0);
+        center = guide->position;
+    }
+    else if(cameraPreset == BEHIND_BOIDS){
+        eye = glm::vec3(80+cameraOffset, 25, 0);
+        up = glm::vec3(0,1,0);
+        center = glm::vec3(0, 25, 0);
+    }
+    else if(cameraPreset == PERPENDICULAR_SPEED){
+        eye = glm::vec3(100+cameraOffset, 10, 0);
+        up = glm::vec3(0,1,0);
+        center = glm::vec3(0, 5, 0);
+    }
+    else if(cameraPreset == TOP_VIEW){
+        eye = glm::vec3(0, towerHeight + 10 + cameraOffset, 0);
+        up = glm::vec3(0,0,-1);
+        center = glm::vec3(0, 0, 0);
+    }
+
+    if(isPaused) return;
 
     if (guideMode == RANDOM_POSITION){
-        int current = (int) glutGet(GLUT_ELAPSED_TIME)/100;
+        int current = (int) glutGet(GLUT_ELAPSED_TIME)/1000;
         if (lastUpdated != current && current % 10 == 0){
             guideGoal.x = Util::getRandom() * 40 - 20;
             guideGoal.y = Util::getRandom() * 20;
@@ -40,35 +62,12 @@ void Simulation::update(){
     }
     else if (guideMode == CIRCLE){
         guideGoal = glm::vec3(50, 10, 50);
-        guideGoal.x *= glm::cos(glutGet(GLUT_ELAPSED_TIME)/100 * PI / 10);
-        guideGoal.z *= -glm::sin(glutGet(GLUT_ELAPSED_TIME)/100 * PI / 10);
+        guideGoal.x *= glm::cos(glutGet(GLUT_ELAPSED_TIME)/1000 * PI / 10);
+        guideGoal.z *= -glm::sin(glutGet(GLUT_ELAPSED_TIME)/1000 * PI / 10);
         if (guide != 0) guide->update(guideGoal);
     }
     else{
         if (guide != 0) guide->update();
-    }
-
-    if(cameraPreset == ABOVE_TOWER){
-        eye = glm::vec3(0, towerHeight + cameraOffset, 0);
-        up = glm::vec3(0,1,0);
-        center = guide->position;
-        // center = glm::vec3(0, 0, 0);
-
-    }
-    else if(cameraPreset == BEHIND_BOIDS){
-            eye = glm::vec3(80+cameraOffset, 25, 0);
-            up = glm::vec3(0,1,0);
-            center = glm::vec3(0, 25, 0);
-    }
-    else if(cameraPreset == PERPENDICULAR_SPEED){
-            eye = glm::vec3(100+cameraOffset, 10, 0);
-            up = glm::vec3(0,1,0);
-            center = glm::vec3(0, 5, 0);
-    }
-    else if(cameraPreset == TOP_VIEW){
-        eye = glm::vec3(0, towerHeight + 10 + cameraOffset, 0);
-        up = glm::vec3(0,0,-1);
-        center = glm::vec3(0, 0, 0);
     }
 }
 
@@ -93,7 +92,6 @@ void Simulation::draw(){
     //Projecao perspectiva
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    // gluPerspective(60.0, this->aspectRatio, 1.6, 100);
     gluPerspective(60.0, this->aspectRatio, 1.6, FAR);
     glMatrixMode(GL_MODELVIEW);
 
@@ -170,7 +168,12 @@ void Simulation::onActiveKeyboard(int key, int x, int  y){
         case 'R':
             //reset
             // init();
-        break;
+            break;
+        case 'p':
+        case 'P':
+            if(isPaused) isPaused = false;
+            else isPaused = true;
+            break;
     default:
         break;
     }
