@@ -8,7 +8,7 @@ Simulation::Simulation(int width, int height){
 
 void Simulation::init(){
     towerHeight = 50;
-    cameraPreset = TOP_VIEW;
+    cameraPreset = ABOVE_TOWER;
     cameraOffset = 0;
 
     this->floorColor =  glm::vec4(1.0, 1.0, 0.0, 1.0);
@@ -19,17 +19,41 @@ void Simulation::init(){
                                     10.0, 0.0, 10.0, 1.0
                                  );
 
-    guide = new Boid(glm::vec3(5,10,5));
+    guide = new Boid(glm::vec3(100,20,100));
+
+    guideMode = CIRCLE;
+    lastUpdated = 0;
 }
 
 void Simulation::update(){
+    // std::cout << "GTIME :: " <<  glutGet(GLUT_ELAPSED_TIME) << std::endl;
 
-    guide->update();
+    if (guideMode == RANDOM_POSITION){
+        int current = (int) glutGet(GLUT_ELAPSED_TIME)/100;
+        if (lastUpdated != current && current % 10 == 0){
+            guideGoal.x = Util::getRandom() * 40 - 20;
+            guideGoal.y = Util::getRandom() * 20;
+            guideGoal.z = Util::getRandom() * 40 - 20;
+            lastUpdated = current;
+        }
+        if (guide != 0) guide->update(guideGoal);
+    }
+    else if (guideMode == CIRCLE){
+        guideGoal = glm::vec3(50, 10, 50);
+        guideGoal.x *= glm::cos(glutGet(GLUT_ELAPSED_TIME)/100 * PI / 10);
+        guideGoal.z *= -glm::sin(glutGet(GLUT_ELAPSED_TIME)/100 * PI / 10);
+        if (guide != 0) guide->update(guideGoal);
+    }
+    else{
+        if (guide != 0) guide->update();
+    }
 
     if(cameraPreset == ABOVE_TOWER){
         eye = glm::vec3(0, towerHeight + cameraOffset, 0);
         up = glm::vec3(0,1,0);
-        center = glm::vec3(0, 0, 0);
+        center = guide->position;
+        // center = glm::vec3(0, 0, 0);
+
     }
     else if(cameraPreset == BEHIND_BOIDS){
             eye = glm::vec3(80+cameraOffset, 25, 0);
@@ -70,7 +94,7 @@ void Simulation::draw(){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     // gluPerspective(60.0, this->aspectRatio, 1.6, 100);
-    gluPerspective(60.0, this->aspectRatio, 1.6, 500);
+    gluPerspective(60.0, this->aspectRatio, 1.6, FAR);
     glMatrixMode(GL_MODELVIEW);
 
     //Pombo guia
@@ -99,10 +123,10 @@ void Simulation::draw(){
     glBegin(GL_QUADS);
         glColor4f(.1f, 0.75f, 0.1f, 1.0);
         glNormal3f(0, 1, 0);
-        glVertex3f(eye.x-500, 0, eye.z+500);
-        glVertex3f(eye.x-500, 0, eye.z-500);
-        glVertex3f(eye.x+500, 0, eye.z-500);
-        glVertex3f(eye.x+500, 0, eye.z+500);
+        glVertex3f(eye.x-FAR, 0, eye.z+FAR);
+        glVertex3f(eye.x-FAR, 0, eye.z-FAR);
+        glVertex3f(eye.x+FAR, 0, eye.z-FAR);
+        glVertex3f(eye.x+FAR, 0, eye.z+FAR);
     glEnd();
 
     unsigned int GridSizeX = 64;

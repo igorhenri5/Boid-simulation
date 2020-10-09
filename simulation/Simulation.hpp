@@ -43,6 +43,16 @@ class Simulation{
         BoidGroup* boids;
         Boid* guide;
 
+        enum GuideModes{
+            RANDOM_POSITION,
+            CIRCLE,
+            FREE_MOTION
+        };
+
+        GuideModes guideMode;
+        glm::vec3 guideGoal;
+        int lastUpdated;
+
     //Status
         bool isPaused = false;
 
