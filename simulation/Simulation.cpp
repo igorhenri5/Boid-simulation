@@ -20,6 +20,7 @@ void Simulation::init(){
                                  );
 
     guide = new Boid(glm::vec3(100,20,100));
+    boids = new BoidGroup(5);
 
     guideMode = CIRCLE;
     lastUpdated = 0;
@@ -69,6 +70,8 @@ void Simulation::update(){
     else{
         if (guide != 0) guide->update();
     }
+
+    boids->update(guideGoal);
 }
 
 void Simulation::draw(){
@@ -99,7 +102,7 @@ void Simulation::draw(){
     guide->draw();
 
     //Pombaiada
-    //boids->draw();
+    boids->draw();
 
     //Torre
     glBegin(GL_TRIANGLE_FAN);
@@ -160,11 +163,17 @@ void Simulation::onActiveKeyboard(int key, int x, int  y){
             std::cout << "Camera mode changed TV" << std::endl;
             cameraPreset = TOP_VIEW;
             break;
+        case '+':
+            std::cout << "Add Boid" << std::endl;
+            boids->addBoid();
+            break;
         case 'q':
         case 'Q':
             //quit
             exit(1);
         case 'r':
+            std::cout << int(Util::getRandom()*100) << std::endl;
+            break;
         case 'R':
             //reset
             // init();
