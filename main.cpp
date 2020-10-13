@@ -55,15 +55,11 @@ void initOpenGLEnvironment(int width, int height){
 
     GLfloat light_ambient[] = { 0.10, 0.15, 0.0, 1.0 };
     
-    // GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_diffuse[] = { 0.35, 0.25, 0.1, 1.0 };
-    // GLfloat light_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 
-    // GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_specular[] = { 0.3, 0.3, 0.2, 1.0 };
     
     GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-    // GLfloat light_position[] = { 0.0, 1.0, 0.0, 0.0 };
 
 
     glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
@@ -72,7 +68,6 @@ void initOpenGLEnvironment(int width, int height){
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
 
     glEnable(GL_LIGHTING);
-    // glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
 
     glEnable(GL_BLEND);
@@ -110,7 +105,6 @@ int main(int argc, char **argv){
 
     std::cout << "Starting Main Loop." << std::endl;
     glutIdleFunc(mainloop);
-    // glutCloseFunc(onClose);
 
     glutMainLoop();
 

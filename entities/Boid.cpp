@@ -3,77 +3,226 @@
 Boid::Boid(glm::vec3 position, glm::vec3 color){   
     this->position = position;
     this->color = color;
-        // this->color*=1.5f;
+
+    this->angleX = 0;
+    this->angleY = 0;
+    this->angleZ = 0; 
+
+    this->neckSize = 0.3 * 2;
+    this->headHeight = 0.3 * 2;
+    this->bodyHeight = 0.5 * 2;
+    this->tailHeight = 0.2 * 2;
+    this->tailWidth = 0.05 * 2;
+    this->tailLength = 0.3 * 2;
+    this->wingWidth = 0.05 * 2;
+    this->wingLength = 0.7 * 2;
+    this->wingTipHeight = 0.2 * 2;
+    this->wingTipFlapX = 0.7 * 2;
+    this->wingTipFlapZ = 0;
+    this->flapPhase = Util::getRandom()*PI;
+    this->flapFactor = 1 + Util::getRandom();
+    this->flapTick = 0;
+
 }
 
 void Boid::draw(){
-    //o pombo é um cubo mesmo
-    glBegin(GL_QUADS);
-        // top
-        glColor3f(this->color.x, this->color.y, this->color.z);
-        // glNormal3f(0.0f + this->position.x, 1.0f + this->position.y, 0.0f + this->position.z);
-        glNormal3f(0, 1, 0);
-        glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glTranslatef(position.x, position.y, position.z);
+    glScalef(0.5, 0.5, 0.5);
+    glRotatef(angleX * 180 / PI, 1, 0, 0);
+    glRotatef(-angleY * 180 / PI, 0, 1, 0);
+    glRotatef(angleZ * 180 / PI, 0, 0, 1);
+
+    float boidSpec[] = {0.1, 0.1, 0.1, 1.0};
+    float boidEmis[] = {0.0, 0.0, 0.0, 1.0};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, boidSpec);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, boidEmis);
+    glm::vec3 norm;
+
+    // Draw Head
+    glBegin(GL_TRIANGLES);
+        // glColor4f(1.0, 1.0, 0.0, 0.0);
+        glColor3f(this->color.x+0.1, this->color.y+0.1, this->color.z+0.1);
+
+        norm =
+        glm::cross(glm::vec3(-neckSize/2, neckSize/2, headHeight),
+                   glm::vec3(neckSize/2, neckSize/2, headHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0, 0.0,-(1.0));
+        glVertex3f(-neckSize/2,neckSize/2,-(1-headHeight));
+        glVertex3f(neckSize/2,neckSize/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(-neckSize/2, -neckSize/2, headHeight),
+                   glm::vec3(-neckSize/2, neckSize/2, headHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0, 0.0,-(1.0));
+        glVertex3f(-neckSize/2,-neckSize/2,-(1-headHeight));
+        glVertex3f(-neckSize/2,neckSize/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(neckSize/2, neckSize/2, headHeight),
+                   glm::vec3(neckSize/2, -neckSize/2, headHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0, 0.0,-(1.0));
+        glVertex3f(neckSize/2,neckSize/2,-(1-headHeight));
+        glVertex3f(neckSize/2,-neckSize/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(neckSize/2, -neckSize/2, headHeight),
+                   glm::vec3(-neckSize/2, -neckSize/2, headHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0, 0.0,-(1.0));
+        glVertex3f(neckSize/2,-neckSize/2,-(1-headHeight));
+        glVertex3f(-neckSize/2,-neckSize/2,-(1-headHeight));
     glEnd();
-        
-    glBegin(GL_QUADS);
-        // front
+
+    // Draw Body
+    glBegin(GL_TRIANGLES);
         glColor3f(this->color.x, this->color.y, this->color.z);
-        // glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, 1.0f + this->position.z);
-        glNormal3f(1, 0, 0);
-        glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
+        //glColor3f(1.0, 1.0, 0.0);
+
+        norm =
+        glm::cross(glm::vec3(neckSize/2, neckSize/2, -bodyHeight),
+                   glm::vec3(-neckSize/2, neckSize/2, -bodyHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glColor3f(this->color.x, this->color.y, this->color.z);
+        //glColor3f(0.0, 0.0, 1.0);
+        glVertex3f(neckSize/2,neckSize/2,-(1-headHeight));
+        glVertex3f(-neckSize/2,neckSize/2,-(1-headHeight));
+        glColor3f(this->color.x, this->color.y, this->color.z);
+        //glColor3f(1.0, 1.0, 0.0);
+
+        norm =
+        glm::cross(glm::vec3(-neckSize/2, -neckSize/2, -bodyHeight),
+                   glm::vec3(neckSize/2, -neckSize/2, -bodyHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(-neckSize/2,-neckSize/2,-(1-headHeight));
+        glVertex3f(neckSize/2,-neckSize/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(-neckSize/2, neckSize/2, -bodyHeight),
+                   glm::vec3(-neckSize/2, -neckSize/2, -bodyHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(-neckSize/2,neckSize/2,-(1-headHeight));
+        glVertex3f(-neckSize/2,-neckSize/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(neckSize/2, neckSize/2, -bodyHeight),
+                   glm::vec3(neckSize/2, -neckSize/2, -bodyHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(neckSize/2,neckSize/2,-(1-headHeight));
+        glVertex3f(neckSize/2,-neckSize/2,-(1-headHeight));
     glEnd();
-        
-    glBegin(GL_QUADS);
-        // right
+
+
+    // Draw Tail
+    glBegin(GL_TRIANGLES);
         glColor3f(this->color.x, this->color.y, this->color.z);
-        // glNormal3f(1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
-        glNormal3f(0, 0, 1);
-        glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
+        //glColor3f(1.0, 0.5, 0.0);
+
+        norm =
+        glm::cross(glm::vec3(-tailLength/2, tailWidth/2, tailHeight),
+                   glm::vec3(tailLength/2, tailWidth/2, tailHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(-tailLength/2,tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+        glVertex3f(tailLength/2,tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+
+        norm =
+        glm::cross(glm::vec3(tailLength/2, tailWidth/2, tailHeight),
+                   glm::vec3(tailLength/2, -tailWidth/2, tailHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(tailLength/2,tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+        glVertex3f(tailLength/2,-tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+
+        norm =
+        glm::cross(glm::vec3(tailLength/2, -tailWidth/2, tailHeight),
+                   glm::vec3(-tailLength/2, -tailWidth/2, tailHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(tailLength/2,-tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+        glVertex3f(-tailLength/2,-tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+
+        norm =
+        glm::cross(glm::vec3(-tailLength/2, -tailWidth/2, tailHeight),
+                   glm::vec3(-tailLength/2, tailWidth/2, tailHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(-tailLength/2,-tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+        glVertex3f(-tailLength/2,tailWidth/2,-(1-headHeight-bodyHeight-tailHeight));
+
     glEnd();
-        
-    glBegin(GL_QUADS);
-        // left
+
+    // Draw Right Wing
+    glBegin(GL_TRIANGLES);
         glColor3f(this->color.x, this->color.y, this->color.z);
-        // glNormal3f(-1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
-        glNormal3f(0, 1, -1);
-        glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
+        //glColor3f(0.2, 1.0, 0.0);
+
+        norm =
+        glm::cross(glm::vec3(neckSize/2-wingTipFlapX, -wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight),
+                   glm::vec3(neckSize/2-wingTipFlapX, wingWidth/2-wingTipFlapZ,-bodyHeight+wingTipHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(wingTipFlapX,wingTipFlapZ,-(1-headHeight-bodyHeight+wingTipHeight));
+        glVertex3f(neckSize/2,-wingWidth/2,-(1-headHeight));
+        glVertex3f(neckSize/2,wingWidth/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(-wingTipFlapX, -wingTipFlapZ, wingTipHeight),
+                   glm::vec3(neckSize/2-wingTipFlapX, -wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(wingTipFlapX,wingTipFlapZ,-(1-headHeight-bodyHeight+wingTipHeight));
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(neckSize/2,-wingWidth/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(neckSize/2-wingTipFlapX, wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight),
+                   glm::vec3(-wingTipFlapX, -wingTipFlapZ, wingTipHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(wingTipFlapX,wingTipFlapZ,-(1-headHeight-bodyHeight+wingTipHeight));
+        glVertex3f(neckSize/2,wingWidth/2,-(1-headHeight));
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
     glEnd();
-        
-    glBegin(GL_QUADS);
-        // bottom
+
+    // Draw Left Wing
+    glBegin(GL_TRIANGLE_FAN);
         glColor3f(this->color.x, this->color.y, this->color.z);
-        // glNormal3f(0.0f + this->position.x, -1.0f + this->position.y, 0.0f + this->position.z);
-        glNormal3f(0, -1, 0);
-        glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
+        //glColor3f(0.2, 1.0, 0.0);
+
+        norm =
+        glm::cross(glm::vec3(-neckSize/2+wingTipFlapX, wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight),
+                   glm::vec3(-neckSize/2+wingTipFlapX, -wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(-wingTipFlapX,wingTipFlapZ,-(1-headHeight-bodyHeight+wingTipHeight));
+        glVertex3f(-neckSize/2,wingWidth/2,-(1-headHeight));
+        glVertex3f(-neckSize/2,-wingWidth/2,-(1-headHeight));
+
+        norm =
+        glm::cross(glm::vec3(-neckSize/2+wingTipFlapX, -wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight),
+                   glm::vec3(wingTipFlapX, -wingTipFlapZ, wingTipHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(-wingTipFlapX,wingTipFlapZ,-(1-headHeight-bodyHeight+wingTipHeight));
+        glVertex3f(-neckSize/2,-wingWidth/2,-(1-headHeight));
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+
+        norm =
+        glm::cross(glm::vec3(wingTipFlapX, -wingTipFlapZ, wingTipHeight),
+                   glm::vec3(-neckSize/2+wingTipFlapX, wingWidth/2-wingTipFlapZ, -bodyHeight+wingTipHeight));
+        glNormal3f(norm.x, norm.y, norm.z);
+        glVertex3f(-wingTipFlapX,wingTipFlapZ,-(1-headHeight-bodyHeight+wingTipHeight));
+        glVertex3f(0.0,0.0,-(1.0-headHeight-bodyHeight));
+        glVertex3f(-neckSize/2,wingWidth/2,-(1-headHeight));
     glEnd();
-        
-    glBegin(GL_QUADS);
-        // back
-        glColor3f(this->color.x, this->color.y, this->color.z);
-        // glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, -1.0f + this->position.z);
-        glNormal3f(-1, 0, 0);
-        glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
-        glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
-	glEnd();
+
+    glPopMatrix();
 }
+
 
 glm::vec3 Boid::getHeading(){
     glm::vec3 heading;
@@ -106,6 +255,7 @@ void Boid::rotateYaw(double degrees){
     if (angleX < 0) angleX += 2*PI;
 }
 
+
 void Boid::update(){
     glm::vec3 target = getHeading();
     target *= speed;
@@ -134,7 +284,6 @@ void Boid::update(glm::vec3 target){
         glm::vec3(0,0,0)  // Tower Component
     );
 }
-
 
 void Boid::update(glm::vec3 separation, glm::vec3 boidGroupVelocity,
                   glm::vec3 center, glm::vec3 target){
@@ -205,8 +354,8 @@ void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 c
     glm::vec3 newHeading = Util::normalize(heading + Util::normalize(velocity));
 
     // Ensure Max Speed
-    double MaxSpeed = 10.0;
-    // double MaxSpeed = 5.0 / 60;
+    // double MaxSpeed = 10.0;
+    double MaxSpeed = 5.0 / 60;
     // double MaxSpeed = 5.0 / s_FPS;
     if (speed > MaxSpeed) speed = MaxSpeed;
 
@@ -242,4 +391,15 @@ void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 c
     angleZ = curveAngle / 180 * 90; // Cap max roll at 90 degrees
     angleZ = angleZ/180*PI;
 
+    // When not in a steep curve, flap the wings
+    if(glm::abs(curveAngle) < 60.0){
+        // flapTick += 2*PI / (s_FPS);
+        flapTick += 2*PI / 60;
+    }
+
+    // Update the wing tip position
+    float angleVariation = glm::cos(flapFactor*flapTick + flapPhase);
+    float currAngle = 30.0/180*PI * angleVariation;
+    wingTipFlapX = wingLength * glm::cos(currAngle);
+    wingTipFlapZ = wingLength * glm::sin(currAngle);
 }

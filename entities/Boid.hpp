@@ -34,6 +34,21 @@ class Boid{
         void rotatePitch(double);
         void myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 cohesionComp, glm::vec3 targetComp, glm::vec3 floorComp, glm::vec3 towerComp);
 
+        float neckSize;
+        float headHeight;
+        float bodyHeight;
+        float tailHeight;
+        float tailWidth;
+        float tailLength;
+        float wingWidth;
+        float wingLength;
+        float wingTipHeight;
+        float wingTipFlapX;
+        float wingTipFlapZ;
+        float flapPhase;
+        float flapFactor;
+        float flapTick;
+
 };
 
 #endif
