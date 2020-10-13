@@ -45,8 +45,26 @@ void mainloop(){
 
 void initOpenGLEnvironment(int width, int height){
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHT0);
+
+    GLfloat light1_position[] = {0.0, 1500.0, 0.0, 1.0};
+    GLfloat light1_intensity[] = {0.1, 0.1, 0.1, 0.2};
+
+    glLightfv(GL_LIGHT1, GL_POSITION, light1_position); 
+    // glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_intensity);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light1_intensity);
+    // glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0);
+    // glLightfv(GL_LIGHT1, GL_SPOT_EXPONENT, 50.0)
+    // glLightfv(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0);
+
+    // glLightfv(GL_LIGHT0, GL_DIFFUSE, cor_luz0);
+    // glLightfv(GL_LIGHT0, GL_SPECULAR, cor_luz0);
+    // glLightfv(GL_LIGHT0, GL_AMBIENT, cor_luz0_amb);
+    // glLightfv(GL_LIGHT0, GL_POSITION, posicao_luz0);
+
     glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+    
     glEnable(GL_BLEND);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GLUT_MULTISAMPLE);
