@@ -23,7 +23,7 @@ void activeKeyboard(unsigned char key, int x, int y){
 }
 
 void specialActiveKeyboard(int key, int x, int y){
-	// simulation.specialActiveKeyboard(key, x, y);
+	simulation->onSpecialKeyboard(key, x, y);
 }
 
 void screenReshape(int width, int height){

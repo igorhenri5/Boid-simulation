@@ -20,7 +20,7 @@ class BoidGroup{
         glm::vec3 calcBoidGroupCenter();
         glm::vec3 calcBoidGroupHeading();
         glm::vec3 calcBoidGroupVelocity();
-        glm::vec3 calcBoidSeparation(std::vector<Boid>::iterator currBoid);
+        glm::vec3 calcBoidSeparation(std::vector<Boid*>::iterator currBoid);
 
         void addBoid();
         void removeBoid();

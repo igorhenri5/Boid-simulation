@@ -9,7 +9,7 @@
 #include "../util/Util.hpp"
 
 #define FRAMETIME 1000/60
-#define FAR 200
+#define FAR 500
 
 class Simulation{
     public:
@@ -63,6 +63,7 @@ class Simulation{
 
         void onReshape(int, int);
         void onActiveKeyboard(int, int, int);
+        void onSpecialKeyboard(int, int, int);
         void onActiveMouse(int, int, int, int);
 };
 

@@ -130,6 +130,40 @@ void Boid::update(glm::vec3 target){
 }
 
 
+void Boid::update(glm::vec3 separation, glm::vec3 boidGroupVelocity,
+                  glm::vec3 center, glm::vec3 target){
+    // Compute alignment component
+    glm::vec3 heading = getHeading();
+    glm::vec3 alignmentComp = (boidGroupVelocity - heading);
+
+    // Compute cohesion component
+    glm::vec3 cohesionComp = (center - position);
+    cohesionComp = Util::normalize(cohesionComp, 2.5);
+
+    // Compute separation component
+    glm::vec3 separationComp = separation;
+
+    // Compute target component
+    glm::vec3 targetComp = (target - position);
+    targetComp = Util::normalize(targetComp, 1.5);
+
+    // Compute floor component
+    glm::vec3 floorComp = glm::vec3(0, 1, 0);
+    floorComp *= Util::normNegSigmoid(position.y, 1.5);
+
+    // Compute tower component
+    glm::vec3 towerComp(0,0,0);
+    if(position.y < 25){
+        towerComp = position - glm::vec3(0, position.y, 0);
+        towerComp *= Util::normalizeNeg(towerComp, 5);
+        towerComp *= 10;
+    }
+
+    // Step in
+    myStep(separationComp, alignmentComp, cohesionComp, targetComp, floorComp, towerComp);
+}
+
+
 void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 cohesionComp, glm::vec3 targetComp, glm::vec3 floorComp, glm::vec3 towerComp){
 
     glm::vec3 heading = getHeading();

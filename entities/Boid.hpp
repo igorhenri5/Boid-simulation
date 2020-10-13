@@ -17,7 +17,9 @@ class Boid{
         glm::vec3 color;
         
         void update();
-        void update(glm::vec3 target);
+        void update(glm::vec3);
+        void update(glm::vec3, glm::vec3, glm::vec3, glm::vec3);
+
         void draw();
 
         float speed;

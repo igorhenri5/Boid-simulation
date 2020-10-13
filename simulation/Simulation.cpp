@@ -34,14 +34,28 @@ void Simulation::update(){
         center = guide->position;
     }
     else if(cameraPreset == BEHIND_BOIDS){
-        eye = glm::vec3(80+cameraOffset, 25, 0);
+        //GUIDE FOCUS
+
         up = glm::vec3(0,1,0);
-        center = glm::vec3(0, 25, 0);
+        glm::vec3 guideHeading = guide->getHeading();
+        // guideHeading *= 5;
+        eye = (guide->position - guideHeading);
+        eye.x += cameraOffset;
+
+        center = guide->position;
     }
     else if(cameraPreset == PERPENDICULAR_SPEED){
-        eye = glm::vec3(100+cameraOffset, 10, 0);
+        //GROUP FOCUSED
+
         up = glm::vec3(0,1,0);
-        center = glm::vec3(0, 5, 0);
+
+        glm::vec3 vetor = glm::cross(up, boids->calcBoidGroupHeading());
+        vetor /= glm::length(vetor);
+        vetor *= 15;
+        eye = boids->calcBoidGroupCenter() - vetor;
+        eye.x += cameraOffset;
+
+        center = boids->calcBoidGroupCenter();
     }
     else if(cameraPreset == TOP_VIEW){
         eye = glm::vec3(0, towerHeight + 10 + cameraOffset, 0);
@@ -74,10 +88,7 @@ void Simulation::update(){
 
     glm::vec3 guideHeading = guide->getHeading();
     guideHeading *= 5;
-    glm::vec3 guidePos = guide->position;
-    boids->update(guidePos - guideHeading);
-
-    // boids->update(guideGoal);
+    boids->update(guide->position - guideHeading);
 }
 
 void Simulation::draw(){
@@ -193,7 +204,36 @@ void Simulation::onActiveKeyboard(int key, int x, int  y){
             if(isPaused) isPaused = false;
             else isPaused = true;
             break;
-    default:
+        default:
+            break;
+    }
+}
+
+void Simulation::onSpecialKeyboard(int key, int x, int y){
+    const float DELTA_ANGLE = PI / 36;
+    std::cout << "SPECIAL KEY " << key << std::endl;
+    switch(key){
+        case GLUT_KEY_F1:
+            guideMode = RANDOM_POSITION;
+            //sortear uma posição
+            break;
+        case GLUT_KEY_F2:
+            guideMode = CIRCLE;
+            break;
+        case GLUT_KEY_F3:
+            guideMode = FREE_MOTION;
+            break;
+
+        case GLUT_KEY_UP:
+            break;
+        case GLUT_KEY_DOWN:
+            break;
+        case GLUT_KEY_LEFT:
+            break;
+        case GLUT_KEY_RIGHT:
+            break;
+        
+        default:
         break;
     }
 }

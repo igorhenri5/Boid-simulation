@@ -8,8 +8,13 @@ BoidGroup::BoidGroup(int numBoids){
 };
 
 void BoidGroup::update(glm::vec3 target){
-    for (std::vector<Boid*>::iterator it = boids.begin(); it != boids.end(); ++it) {
-        (*it)->update(target);
+    glm::vec3 separation;
+    glm::vec3 boidGroupHeading = calcBoidGroupHeading();
+    glm::vec3 center = calcBoidGroupCenter();
+
+    for(auto boid = boids.begin(); boid != boids.end(); boid++){
+        separation = calcBoidSeparation(boid);
+        (*boid)->update(separation, boidGroupHeading, center, target);
     }
 }
 
@@ -19,8 +24,13 @@ void BoidGroup::draw(){
     }
 }
 
-glm::vec3 BoidGroup::calcBoidSeparation(std::vector<Boid>::iterator currBoid){
-
+glm::vec3 BoidGroup::calcBoidSeparation(std::vector<Boid*>::iterator currBoid){
+    glm::vec3 separation(0,0,0);
+    for(auto boid = boids.begin(); boid != boids.end(); boid++){
+        if(boid == currBoid) continue;
+        separation += (*currBoid)->computeSeparation(*boid);
+    }
+    return separation;
 }
 
 glm::vec3 BoidGroup::calcBoidGroupVelocity(){
@@ -28,11 +38,23 @@ glm::vec3 BoidGroup::calcBoidGroupVelocity(){
 }
 
 glm::vec3 BoidGroup::calcBoidGroupHeading(){
-
+    glm::vec3 heading(0,0,0);
+    for (auto boid = boids.begin(); boid != boids.end(); boid++)
+    {
+        heading += (*boid)->getHeading();
+    }
+    heading /= boids.size();
+    return heading;
 }
 
 glm::vec3 BoidGroup::calcBoidGroupCenter(){
-
+    glm::vec3 center(0,0,0);
+    for (auto boid = boids.begin(); boid != boids.end(); boid++)
+    {
+        center += (*boid)->position;
+    }
+    center /= boids.size();
+    return center;
 }
 
 void BoidGroup::addBoid(){
@@ -52,6 +74,5 @@ void BoidGroup::removeBoid(){
 
     std::cout<< "RMBD :: idx " << idx << "  nb " << numBoids << std::endl;
     this->numBoids--;
-    
 }
 
