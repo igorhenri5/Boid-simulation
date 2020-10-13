@@ -10,11 +10,11 @@ class Boid{
     public:
         Boid();
 
-        Boid(glm::vec3);
+        Boid(glm::vec3, glm::vec3);
         ~Boid();
 
         glm::vec3 position;
-        // glm::vec3 color;
+        glm::vec3 color;
         
         void update();
         void update(glm::vec3 target);

@@ -1,15 +1,16 @@
 #include "Boid.hpp"
 
-Boid::Boid(glm::vec3 position){   
+Boid::Boid(glm::vec3 position, glm::vec3 color){   
     this->position = position;
-    // this->color = glm::vec3(1.0f,.5f,1.0f);
+    this->color = color;
+        this->color*=1.5f;
 }
 
 void Boid::draw(){
     //o pombo é um cubo mesmo
     glBegin(GL_QUADS);
         // top
-        glColor3f(2.0f,2.0f,2.0f);
+        glColor3f(this->color.x, this->color.y, this->color.z);
         glNormal3f(0.0f + this->position.x, 1.0f + this->position.y, 0.0f + this->position.z);
         glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
@@ -19,7 +20,7 @@ void Boid::draw(){
         
     glBegin(GL_QUADS);
         // front
-        glColor3f(2.0f,2.0f,2.0f);
+        glColor3f(this->color.x, this->color.y, this->color.z);
         glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, 1.0f + this->position.z);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
@@ -29,7 +30,7 @@ void Boid::draw(){
         
     glBegin(GL_QUADS);
         // right
-        glColor3f(2.0f,2.0f,2.0f);
+        glColor3f(this->color.x, this->color.y, this->color.z);
         glNormal3f(1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
@@ -39,7 +40,7 @@ void Boid::draw(){
         
     glBegin(GL_QUADS);
         // left
-        glColor3f(2.0f,2.0f,2.0f);
+        glColor3f(this->color.x, this->color.y, this->color.z);
         glNormal3f(-1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
         glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
@@ -49,7 +50,7 @@ void Boid::draw(){
         
     glBegin(GL_QUADS);
         // bottom
-        glColor3f(2.0f,2.0f,2.0f);
+        glColor3f(this->color.x, this->color.y, this->color.z);
         glNormal3f(0.0f + this->position.x, -1.0f + this->position.y, 0.0f + this->position.z);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
@@ -59,7 +60,7 @@ void Boid::draw(){
         
     glBegin(GL_QUADS);
         // back
-        glColor3f(2.0f,2.0f,2.0f);
+        glColor3f(this->color.x, this->color.y, this->color.z);
         glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, -1.0f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
@@ -131,11 +132,7 @@ void Boid::update(glm::vec3 target){
 
 void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 cohesionComp, glm::vec3 targetComp, glm::vec3 floorComp, glm::vec3 towerComp){
 
-    // Convert Angles to Heading
-    glm::vec3 heading;
-    heading.x = glm::cos(angleX)*glm::sin(angleY);
-    heading.y = glm::sin(angleX);
-    heading.z = -glm::cos(angleX)*glm::cos(angleY);
+    glm::vec3 heading = getHeading();
 
     // Some factors
     float alignmentFactor = 1;
@@ -168,7 +165,7 @@ void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 c
     glm::vec3 newHeading = Util::normalize(heading + Util::normalize(velocity));
 
     // Ensure Max Speed
-    double MaxSpeed = 5.0;
+    double MaxSpeed = 10.0;
     // double MaxSpeed = 5.0 / 60;
     // double MaxSpeed = 5.0 / s_FPS;
     if (speed > MaxSpeed) speed = MaxSpeed;
@@ -188,7 +185,9 @@ void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 c
         headProjXZ.x += 0.0001;
         headProjXZ.z += 0.0001;
     }
+
     double turnAngle = Util::computeAngle(newHeadProjXZ, headProjXZ);
+    
     if (glm::cross(newHeadProjXZ, headProjXZ).y < 0){
         angleY -= turnAngle* PI / 180;
     }
@@ -197,5 +196,10 @@ void Boid::myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 c
     }
     if (angleY > 2*PI) angleY -= 2*PI;
     if (angleY < 0) angleY += 2*PI;
+
+    // Compute Z Axis Rotation Angle (Roll or bank)
+    double curveAngle = turnAngle * 10;
+    angleZ = curveAngle / 180 * 90; // Cap max roll at 90 degrees
+    angleZ = angleZ/180*PI;
 
 }

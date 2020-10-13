@@ -11,15 +11,15 @@ void Simulation::init(){
     cameraPreset = ABOVE_TOWER;
     cameraOffset = 0;
 
-    this->floorColor =  glm::vec4(1.0, 1.0, 0.0, 1.0);
-    this->floorPos   =  glm::mat4(
-                                    -10.0, 0.0, 10.0, 1.0,
-                                    -10.0, 0.0, -10.0, 1.0,
-                                    10.0, 0.0, -10.0, 1.0,
-                                    10.0, 0.0, 10.0, 1.0
-                                 );
+    // this->floorColor =  glm::vec4(1.0, 1.0, 0.0, 1.0);
+    // this->floorPos   =  glm::mat4(
+    //                                 -10.0, 0.0, 10.0, 1.0,
+    //                                 -10.0, 0.0, -10.0, 1.0,
+    //                                 10.0, 0.0, -10.0, 1.0,
+    //                                 10.0, 0.0, 10.0, 1.0
+    //                              );
 
-    guide = new Boid(glm::vec3(100,20,100));
+    guide = new Boid(glm::vec3(100,20,100), glm::vec3(2.0f,0.2f,1.5f));
     boids = new BoidGroup(5);
 
     guideMode = CIRCLE;
@@ -27,7 +27,7 @@ void Simulation::init(){
 }
 
 void Simulation::update(){
-
+    //camera
     if(cameraPreset == ABOVE_TOWER){
         eye = glm::vec3(0, towerHeight + cameraOffset, 0);
         up = glm::vec3(0,1,0);
@@ -51,6 +51,7 @@ void Simulation::update(){
 
     if(isPaused) return;
 
+    //boids
     if (guideMode == RANDOM_POSITION){
         int current = (int) glutGet(GLUT_ELAPSED_TIME)/1000;
         if (lastUpdated != current && current % 10 == 0){
@@ -71,7 +72,12 @@ void Simulation::update(){
         if (guide != 0) guide->update();
     }
 
-    boids->update(guideGoal);
+    glm::vec3 guideHeading = guide->getHeading();
+    guideHeading *= 5;
+    glm::vec3 guidePos = guide->position;
+    boids->update(guidePos - guideHeading);
+
+    // boids->update(guideGoal);
 }
 
 void Simulation::draw(){
@@ -167,6 +173,10 @@ void Simulation::onActiveKeyboard(int key, int x, int  y){
             std::cout << "Add Boid" << std::endl;
             boids->addBoid();
             break;
+        case '-':
+            std::cout << "Remove Boid" << std::endl;
+            boids->removeBoid();
+            break;        
         case 'q':
         case 'Q':
             //quit

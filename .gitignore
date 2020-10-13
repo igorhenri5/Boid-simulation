@@ -5,3 +5,4 @@ main.o
 main.out
 Simulation.o
 Util.o
+*.o
