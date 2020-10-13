@@ -26,5 +26,5 @@ build_entities:
 build_util:
 	g++ -c util/*.cpp -I"freeglut\include" -I"glm"
 
-# clean:
-# 	rm -f *.o *.exe
+clean:
+	rm -f *.o *.exe
