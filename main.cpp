@@ -46,25 +46,35 @@ void mainloop(){
 void initOpenGLEnvironment(int width, int height){
     glEnable(GL_DEPTH_TEST);
 
-    GLfloat light1_position[] = {0.0, 1500.0, 0.0, 1.0};
-    GLfloat light1_intensity[] = {0.1, 0.1, 0.1, 0.2};
+    GLfloat mat_specular[] = {0.3, 0.3, 0.3, 1.0};
+    GLfloat mat_shininess[] = { 1.0 };
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
 
-    glLightfv(GL_LIGHT1, GL_POSITION, light1_position); 
-    // glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_intensity);
-    glLightfv(GL_LIGHT1, GL_AMBIENT, light1_intensity);
-    // glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0);
-    // glLightfv(GL_LIGHT1, GL_SPOT_EXPONENT, 50.0)
-    // glLightfv(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0);
+    GLfloat light_ambient[] = { 0.10, 0.15, 0.0, 1.0 };
+    
+    // GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_diffuse[] = { 0.35, 0.25, 0.1, 1.0 };
+    // GLfloat light_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 
-    // glLightfv(GL_LIGHT0, GL_DIFFUSE, cor_luz0);
-    // glLightfv(GL_LIGHT0, GL_SPECULAR, cor_luz0);
-    // glLightfv(GL_LIGHT0, GL_AMBIENT, cor_luz0_amb);
-    // glLightfv(GL_LIGHT0, GL_POSITION, posicao_luz0);
+    // GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_specular[] = { 0.3, 0.3, 0.2, 1.0 };
+    
+    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+    // GLfloat light_position[] = { 0.0, 1.0, 0.0, 0.0 };
+
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
 
     glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    // glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
-    
+
     glEnable(GL_BLEND);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GLUT_MULTISAMPLE);

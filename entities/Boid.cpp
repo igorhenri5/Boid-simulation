@@ -3,7 +3,7 @@
 Boid::Boid(glm::vec3 position, glm::vec3 color){   
     this->position = position;
     this->color = color;
-        this->color*=1.5f;
+        // this->color*=1.5f;
 }
 
 void Boid::draw(){
@@ -11,7 +11,8 @@ void Boid::draw(){
     glBegin(GL_QUADS);
         // top
         glColor3f(this->color.x, this->color.y, this->color.z);
-        glNormal3f(0.0f + this->position.x, 1.0f + this->position.y, 0.0f + this->position.z);
+        // glNormal3f(0.0f + this->position.x, 1.0f + this->position.y, 0.0f + this->position.z);
+        glNormal3f(0, 1, 0);
         glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
@@ -21,7 +22,8 @@ void Boid::draw(){
     glBegin(GL_QUADS);
         // front
         glColor3f(this->color.x, this->color.y, this->color.z);
-        glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, 1.0f + this->position.z);
+        // glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, 1.0f + this->position.z);
+        glNormal3f(1, 0, 0);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
@@ -31,7 +33,8 @@ void Boid::draw(){
     glBegin(GL_QUADS);
         // right
         glColor3f(this->color.x, this->color.y, this->color.z);
-        glNormal3f(1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
+        // glNormal3f(1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
+        glNormal3f(0, 0, 1);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
@@ -41,7 +44,8 @@ void Boid::draw(){
     glBegin(GL_QUADS);
         // left
         glColor3f(this->color.x, this->color.y, this->color.z);
-        glNormal3f(-1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
+        // glNormal3f(-1.0f + this->position.x, 0.0f + this->position.y, 0.0f + this->position.z);
+        glNormal3f(0, 1, -1);
         glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
@@ -51,7 +55,8 @@ void Boid::draw(){
     glBegin(GL_QUADS);
         // bottom
         glColor3f(this->color.x, this->color.y, this->color.z);
-        glNormal3f(0.0f + this->position.x, -1.0f + this->position.y, 0.0f + this->position.z);
+        // glNormal3f(0.0f + this->position.x, -1.0f + this->position.y, 0.0f + this->position.z);
+        glNormal3f(0, -1, 0);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, 0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
@@ -61,7 +66,8 @@ void Boid::draw(){
     glBegin(GL_QUADS);
         // back
         glColor3f(this->color.x, this->color.y, this->color.z);
-        glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, -1.0f + this->position.z);
+        // glNormal3f(0.0f + this->position.x, 0.0f + this->position.y, -1.0f + this->position.z);
+        glNormal3f(-1, 0, 0);
         glVertex3f(0.5f + this->position.x, 0.5f + this->position.y, -0.5f + this->position.z);
         glVertex3f(0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
         glVertex3f(-0.5f + this->position.x, -0.5f + this->position.y, -0.5f + this->position.z);
