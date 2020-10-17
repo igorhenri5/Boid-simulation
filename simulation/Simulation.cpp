@@ -37,7 +37,7 @@ void Simulation::update(){
         up = glm::vec3(0,1,0);
         glm::vec3 vetor = glm::cross(up, boids->calcBoidGroupHeading());
         vetor /= glm::length(vetor);
-        vetor *= 15;
+        vetor *= 15+(cameraOffset/10);
         eye = boids->calcBoidGroupCenter() - vetor;
         center = boids->calcBoidGroupCenter();
 

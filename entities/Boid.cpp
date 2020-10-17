@@ -209,7 +209,7 @@ glm::vec3 Boid::getHeading(){
 }
 
 glm::vec3 Boid::computeSeparation(Boid* boid){
-    // Calcula e normaliza a separação para um outro bodi
+    // Calcula e normaliza a separação para um outro boid
     glm::vec3 sep = (boid->position - this->position);
     return -(Util::normalizeNeg(sep, 2.5));
 }
