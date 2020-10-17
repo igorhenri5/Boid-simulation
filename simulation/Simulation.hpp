@@ -46,8 +46,7 @@ class Simulation{
 
         enum GuideModes{
             RANDOM_POSITION,
-            CIRCLE,
-            FREE_MOTION
+            CIRCLE
         };
 
         GuideModes guideMode;

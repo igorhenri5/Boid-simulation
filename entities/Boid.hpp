@@ -32,7 +32,7 @@ class Boid{
 
         void rotateYaw(double);
         void rotatePitch(double);
-        // void rotateRow();
+        void rotateRoll(double);
 
         void moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 cohesionComp, glm::vec3 targetComp, glm::vec3 floorComp, glm::vec3 towerComp);
 

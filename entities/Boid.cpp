@@ -22,7 +22,6 @@ Boid::Boid(glm::vec3 position, glm::vec3 color){
     this->flapPhase = Util::getRandom()*PI;
     this->flapFactor = 1 + Util::getRandom();
     this->flapTick = 0;
-
 }
 
 void Boid::draw(){
@@ -217,23 +216,25 @@ glm::vec3 Boid::computeSeparation(Boid* boid){
 
 //Mecanismos de Banking
 void Boid::rotatePitch(double degrees){
-    angleX += degrees/180*PI;
-    if (angleX > PI/2) angleX = PI/2;
-    if (angleX < -PI/2) angleX = -PI/2;
+    this->angleX += degrees/180*PI;
+    if (this->angleX > PI/2) this->angleX = PI/2;
+    if (this->angleX < -PI/2) this->angleX = -PI/2;
 }
 
 void Boid::rotateYaw(double degrees){
-    angleY += degrees/180*PI;
-    if (angleX > PI*2) angleX -= 2*PI;
-    if (angleX < 0) angleX += 2*PI;
+    this->angleY += degrees/180*PI;
+    if (this->angleY > PI*2) this->angleY -= 2*PI;
+    if (this->angleY < 0) this->angleY += 2*PI;
 }
 
-// void Boid::rotateRow(){
-    
-// }
+void Boid::rotateRoll(double degrees){
+    this->angleZ = degrees / 180 * 90; 
+    this->angleZ = this->angleZ/180*PI;
+}
 
 
 void Boid::update(){
+    //objetivo
     glm::vec3 target = getHeading();
     target *= speed;
 
@@ -248,7 +249,7 @@ void Boid::update(){
 }
 
 void Boid::update(glm::vec3 target){
-    // Compute target component
+    //objetivo
     glm::vec3 targetComp = (target - position);
     targetComp = Util::normalize(targetComp, 1.5);
 
@@ -343,6 +344,7 @@ void Boid::moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3
 
     // Compute angleX
     angleX = glm::asin(newHeading.y);
+// rotateYaw(turnAngle)
 
     // Compute angleY
     glm::vec3 newHeadProjXZ = newHeading * glm::vec3(1,0,1);
@@ -353,7 +355,7 @@ void Boid::moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3
     }
 
     double turnAngle = Util::computeAngle(newHeadProjXZ, headProjXZ);
-    
+// rotateYaw(turnAngle)
     if(glm::cross(newHeadProjXZ, headProjXZ).y < 0)
         angleY -= turnAngle* PI / 180;
     else
@@ -364,6 +366,7 @@ void Boid::moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3
 
     // Compute Z Axis Rotation Angle (Roll or bank)
     double curveAngle = turnAngle * 10;
+// rotateRoll(curveAngle);
     angleZ = curveAngle / 180 * 90; // Cap max roll at 90 degrees
     angleZ = angleZ/180*PI;
 

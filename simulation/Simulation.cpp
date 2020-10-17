@@ -197,9 +197,6 @@ void Simulation::onSpecialKeyboard(int key, int x, int y){
         case GLUT_KEY_F2:
             guideMode = CIRCLE;
             break;
-        case GLUT_KEY_F3:
-            guideMode = FREE_MOTION;
-            break;
         default:
         break;
     }
@@ -208,10 +205,8 @@ void Simulation::onSpecialKeyboard(int key, int x, int y){
 void Simulation::onActiveMouse(int button, int state, int x, int y){
     std::cout << "OAM :: " << button << " "<< state << std::endl;
     if(button == 3){
-        // if(cameraOffset > -100)
         cameraOffset-=2;
     }else if(button == 4){
-        // if(cameraOffset < 100)
         cameraOffset+=2;
     }
 }
