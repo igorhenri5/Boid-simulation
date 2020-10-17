@@ -57,24 +57,24 @@ void Simulation::update(){
     if(isPaused) return;
 
     //boids
-    if (guideMode == RANDOM_POSITION){
+    if(guideMode == RANDOM_POSITION){
         int current = (int) glutGet(GLUT_ELAPSED_TIME)/1000;
-        if (lastUpdated != current && current % 10 == 0){
+        if(lastUpdated != current && current % 10 == 0){
             guideGoal.x = Util::getRandom() * 40 - 20;
             guideGoal.y = Util::getRandom() * 20;
             guideGoal.z = Util::getRandom() * 40 - 20;
             lastUpdated = current;
         }
-        if (guide != 0) guide->update(guideGoal);
+        guide->update(guideGoal);
     }
-    else if (guideMode == CIRCLE){
+    else if(guideMode == CIRCLE){
         guideGoal = glm::vec3(50, 10, 50);
         guideGoal.x *= glm::cos(glutGet(GLUT_ELAPSED_TIME)/1000 * PI / 10);
         guideGoal.z *= -glm::sin(glutGet(GLUT_ELAPSED_TIME)/1000 * PI / 10);
-        if (guide != 0) guide->update(guideGoal);
+        guide->update(guideGoal);
     }
     else{
-        if (guide != 0) guide->update();
+        guide->update();
     }
 
     glm::vec3 guideHeading = guide->getHeading();
@@ -192,7 +192,6 @@ void Simulation::onSpecialKeyboard(int key, int x, int y){
     switch(key){
         case GLUT_KEY_F1:
             guideMode = RANDOM_POSITION;
-            //sortear uma posição
             break;
         case GLUT_KEY_F2:
             guideMode = CIRCLE;
