@@ -32,8 +32,11 @@ class Boid{
 
         void rotateYaw(double);
         void rotatePitch(double);
-        void myStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 cohesionComp, glm::vec3 targetComp, glm::vec3 floorComp, glm::vec3 towerComp);
+        // void rotateRow();
 
+        void moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3 cohesionComp, glm::vec3 targetComp, glm::vec3 floorComp, glm::vec3 towerComp);
+
+        //Corpo do boid
         float neckSize;
         float headHeight;
         float bodyHeight;

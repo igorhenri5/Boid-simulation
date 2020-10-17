@@ -1,3 +1,4 @@
+# all:  build_util build_entities build_simulation build_main link
 all:  build_util build_entities build_simulation build_main link run
 linux: build_util build_entities build_simulation build_main link_alt
 
@@ -7,9 +8,7 @@ run:
 	./main.out
 
 link:
-	g++ -std=c++11 -I"glm" -o main.out *.o -L"freeglut\lib" -lfreeglut -lopengl32 -lglu32
-	# g++ -o main.out *.o -L"freeglut\lib" -lfreeglut -lopengl32 -lglu32
-
+	g++ -I"glm" -o main.out *.o -L"freeglut\lib" -lfreeglut -lopengl32 -lglu32
 
 link_alt:
 	g++ -o main.out *.o -L"freeglut\lib" -lglut -lGL -lGLU 

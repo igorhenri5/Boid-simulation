@@ -11,17 +11,10 @@ void Simulation::init(){
     cameraPreset = ABOVE_TOWER;
     cameraOffset = 0;
 
-    // this->floorColor =  glm::vec4(1.0, 1.0, 0.0, 1.0);
-    // this->floorPos   =  glm::mat4(
-    //                                 -10.0, 0.0, 10.0, 1.0,
-    //                                 -10.0, 0.0, -10.0, 1.0,
-    //                                 10.0, 0.0, -10.0, 1.0,
-    //                                 10.0, 0.0, 10.0, 1.0
-    //                              );
-
     guide = new Boid(glm::vec3(100,20,100), glm::vec3(2.0f,0.2f,1.5f));
     boids = new BoidGroup(5);
 
+    //Guide inicia em trajetória circular ao redor da torre
     guideMode = CIRCLE;
     lastUpdated = 0;
 }
@@ -35,7 +28,6 @@ void Simulation::update(){
     }
     else if(cameraPreset == BEHIND_BOIDS){
         //GUIDE FOCUS
-
         up = glm::vec3(0,1,0);
         glm::vec3 guideHeading = guide->getHeading();
         // guideHeading *= 5;
@@ -46,7 +38,6 @@ void Simulation::update(){
     }
     else if(cameraPreset == PERPENDICULAR_SPEED){
         //GROUP FOCUSED
-
         up = glm::vec3(0,1,0);
 
         glm::vec3 vetor = glm::cross(up, boids->calcBoidGroupHeading());
@@ -99,26 +90,16 @@ void Simulation::draw(){
     glLoadIdentity();
     gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z);
 
-    //Luz
-    GLfloat lightPos[] = {5.0, 5.0, 5.0, 1.0f};
-    GLfloat ltAmbColor[] = {0.1f, 0.1f, 0.1f, 1.0f};
-    GLfloat ltDifColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    GLfloat ltSpeColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ltAmbColor);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, ltDifColor);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, ltSpeColor);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-
     //Projecao perspectiva
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(60.0, this->aspectRatio, 1.6, FAR);
     glMatrixMode(GL_MODELVIEW);
 
-    //Pombo guia
+    //Boid guia
     guide->draw();
 
-    //Pombaiada
+    //Grupo de Boids
     boids->draw();
 
     //Torre
@@ -137,7 +118,7 @@ void Simulation::draw(){
         }
     glEnd();
 
-    // Chão
+    //Chão
     glBegin(GL_QUADS);
         glColor4f(.1f, 0.75f, 0.1f, 1.0);
         glNormal3f(0, 1, 0);
@@ -156,28 +137,28 @@ void Simulation::draw(){
 }
 
 void Simulation::onReshape(int width, int height){
-    std::cout << "reshape event" << std::endl;
+    // std::cout << "reshape event" << std::endl;
     glViewport(0,0, width, height);
     this->aspectRatio = (float) width / (float) height;
 }
 
 void Simulation::onActiveKeyboard(int key, int x, int  y){
-    std::cout << "Key pressed:: " << key << std::endl;
+    // std::cout << "Key pressed:: " << key << std::endl;
     switch(key){
         case '1':
-            std::cout << "Camera mode changed AT" << std::endl;
+            std::cout << "Camera mode changed Above-Tower" << std::endl;
             cameraPreset = ABOVE_TOWER;
             break;
         case '2':
-            std::cout << "Camera mode changed BB" << std::endl;
+            std::cout << "Camera mode changed Behind-Boids" << std::endl;
             cameraPreset = BEHIND_BOIDS;
             break;
         case '3':
-            std::cout << "Camera mode changed PS" << std::endl;
+            std::cout << "Camera mode changed Perpendicular-Speed" << std::endl;
             cameraPreset = PERPENDICULAR_SPEED;
             break;
         case '4':
-            std::cout << "Camera mode changed TV" << std::endl;
+            std::cout << "Camera mode changed Top-View" << std::endl;
             cameraPreset = TOP_VIEW;
             break;
         case '+':
@@ -194,10 +175,6 @@ void Simulation::onActiveKeyboard(int key, int x, int  y){
             exit(1);
         case 'r':
             std::cout << int(Util::getRandom()*100) << std::endl;
-            break;
-        case 'R':
-            //reset
-            // init();
             break;
         case 'p':
         case 'P':
@@ -223,16 +200,6 @@ void Simulation::onSpecialKeyboard(int key, int x, int y){
         case GLUT_KEY_F3:
             guideMode = FREE_MOTION;
             break;
-
-        case GLUT_KEY_UP:
-            break;
-        case GLUT_KEY_DOWN:
-            break;
-        case GLUT_KEY_LEFT:
-            break;
-        case GLUT_KEY_RIGHT:
-            break;
-        
         default:
         break;
     }
