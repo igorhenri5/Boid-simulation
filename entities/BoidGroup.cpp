@@ -66,7 +66,7 @@ void BoidGroup::removeBoid(){
     if(this->numBoids <= 0) return;
     unsigned int idx = int(Util::getRandom() * this->numBoids);
     if(idx >= this->numBoids) idx--;
-    std::cout<< "RMBD :: idx " << idx << "  nb " << numBoids << std::endl;
+    // std::cout<< "RMBD :: idx " << idx << "  nb " << numBoids << std::endl;
     this->boids.erase( boids.begin() + idx);
     this->numBoids--;
 

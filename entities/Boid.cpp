@@ -216,9 +216,7 @@ glm::vec3 Boid::computeSeparation(Boid* boid){
 
 //Mecanismos de Banking
 void Boid::rotatePitch(double degrees){
-    this->angleX += degrees/180*PI;
-    if (this->angleX > PI/2) this->angleX = PI/2;
-    if (this->angleX < -PI/2) this->angleX = -PI/2;
+    this->angleX = degrees;
 }
 
 void Boid::rotateYaw(double degrees){
@@ -330,23 +328,22 @@ void Boid::moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3
 
     // Update the heading
     // H' = <H + <V>>
-    if (glm::length(  glm::cross(heading, velocity)) < 0.0001) velocity += 0.0001;
+    if(glm::length(  glm::cross(heading, velocity)) < 0.0001) velocity += 0.0001;
         glm::vec3 newHeading = Util::normalize(heading + Util::normalize(velocity));
 
     // Ensure Max Speed
     double MaxSpeed = 5.0 / 60;
-    if (speed > MaxSpeed) speed = MaxSpeed;
+    if(speed > MaxSpeed) speed = MaxSpeed;
 
     // Update position
     glm::vec3 step = newHeading;
     step *= speed;
     position += step;
 
-    // Compute angleX
-    angleX = glm::asin(newHeading.y);
-// rotateYaw(turnAngle)
+    // Compute angleX Pitch
+    rotatePitch(glm::asin(newHeading.y));
 
-    // Compute angleY
+    // Compute angleY Yaw
     glm::vec3 newHeadProjXZ = newHeading * glm::vec3(1,0,1);
     glm::vec3 headProjXZ = heading * glm::vec3(1,0,1);
     if(glm::length(  glm::cross(newHeadProjXZ, headProjXZ)) < 0.0001){
@@ -355,26 +352,19 @@ void Boid::moveStep(glm::vec3 separationComp, glm::vec3 alignmentComp, glm::vec3
     }
 
     double turnAngle = Util::computeAngle(newHeadProjXZ, headProjXZ);
-// rotateYaw(turnAngle)
     if(glm::cross(newHeadProjXZ, headProjXZ).y < 0)
-        angleY -= turnAngle* PI / 180;
+        rotateYaw(-turnAngle);
     else
-        angleY += turnAngle* PI / 180;  
+        rotateYaw(turnAngle);
           
-    if(angleY > 2*PI) angleY -= 2*PI;
-    if(angleY < 0) angleY += 2*PI;
-
-    // Compute Z Axis Rotation Angle (Roll or bank)
+    // Compute angleZ Roll
     double curveAngle = turnAngle * 10;
-// rotateRoll(curveAngle);
-    angleZ = curveAngle / 180 * 90; // Cap max roll at 90 degrees
-    angleZ = angleZ/180*PI;
+    rotateRoll(curveAngle);
 
     // Wing animation
     if(glm::abs(curveAngle) < 60.0){
         flapTick += 2*PI / 60;
     }
-
     float angleVariation = glm::cos(flapFactor*flapTick + flapPhase);
     float currAngle = 30.0/180*PI * angleVariation;
     wingTipFlapX = wingLength * glm::cos(currAngle);
