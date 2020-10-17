@@ -27,26 +27,20 @@ void Simulation::update(){
         center = guide->position;
     }
     else if(cameraPreset == BEHIND_BOIDS){
-        //GUIDE FOCUS
         up = glm::vec3(0,1,0);
-        glm::vec3 guideHeading = guide->getHeading();
-        // guideHeading *= 5;
-        eye = (guide->position - guideHeading);
-        eye.x += cameraOffset;
-
-        center = guide->position;
+        glm::vec3 dist = boids->calcBoidGroupHeading();
+        dist *= 5+(cameraOffset/10);
+        eye = boids->calcBoidGroupCenter() - dist;
+        center = boids->calcBoidGroupCenter();
     }
     else if(cameraPreset == PERPENDICULAR_SPEED){
-        //GROUP FOCUSED
         up = glm::vec3(0,1,0);
-
         glm::vec3 vetor = glm::cross(up, boids->calcBoidGroupHeading());
         vetor /= glm::length(vetor);
         vetor *= 15;
         eye = boids->calcBoidGroupCenter() - vetor;
-        eye.x += cameraOffset;
-
         center = boids->calcBoidGroupCenter();
+
     }
     else if(cameraPreset == TOP_VIEW){
         eye = glm::vec3(0, towerHeight + 10 + cameraOffset, 0);
@@ -188,13 +182,15 @@ void Simulation::onActiveKeyboard(int key, int x, int  y){
 
 void Simulation::onSpecialKeyboard(int key, int x, int y){
     const float DELTA_ANGLE = PI / 36;
-    std::cout << "SPECIAL KEY " << key << std::endl;
+    // std::cout << "SPECIAL KEY " << key << std::endl;
     switch(key){
         case GLUT_KEY_F1:
             guideMode = RANDOM_POSITION;
+            std::cout << "Guide movement mode changed to RANDOM_POSITION" << std::endl;
             break;
         case GLUT_KEY_F2:
             guideMode = CIRCLE;
+            std::cout << "Guide movement mode changed to CIRCLE" << std::endl;
             break;
         default:
         break;
@@ -202,7 +198,7 @@ void Simulation::onSpecialKeyboard(int key, int x, int y){
 }
 
 void Simulation::onActiveMouse(int button, int state, int x, int y){
-    std::cout << "OAM :: " << button << " "<< state << std::endl;
+    // std::cout << "OAM :: " << button << " "<< state << std::endl;
     if(button == 3){
         cameraOffset-=2;
     }else if(button == 4){

@@ -2,6 +2,7 @@
 #include <iostream>
 
 BoidGroup::BoidGroup(int numBoids){
+    this->numBoids = 0;
     for(int i=0; i<numBoids; i++){
         addBoid();        
     }
@@ -63,13 +64,11 @@ void BoidGroup::addBoid(){
 
 void BoidGroup::removeBoid(){
     if(this->numBoids <= 0) return;
-
-    unsigned int idx = int(Util::getRandom() * numBoids);
-    // if(idx == numBoids) idx--;
-    if(idx >= numBoids) idx--;
-    boids.erase( boids.begin() + idx);
-
-    // std::cout<< "RMBD :: idx " << idx << "  nb " << numBoids << std::endl;
+    unsigned int idx = int(Util::getRandom() * this->numBoids);
+    if(idx >= this->numBoids) idx--;
+    std::cout<< "RMBD :: idx " << idx << "  nb " << numBoids << std::endl;
+    this->boids.erase( boids.begin() + idx);
     this->numBoids--;
+
 }
 
